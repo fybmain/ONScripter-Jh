@@ -1,0 +1,178 @@
+diff -Naru jh10001-onscripter-jh-e0eaf62c1cd6/Makefile.Linux jh10001/Makefile.Linux
+--- jh10001-onscripter-jh-e0eaf62c1cd6/Makefile.Linux	2016-12-01 21:17:39.000000000 +0800
++++ jh10001/Makefile.Linux	2017-09-07 19:09:59.197910216 +0800
+@@ -19,7 +19,7 @@
+ # mandatory: SDL, SDL_ttf, SDL_image, SDL_mixer, bzip2
+ DEFS = -DLINUX -DUSE_SDL_RENDERER -DNDEBUG
+ INCS = `sdl2-config --cflags`
+-LIBS = `sdl2-config --libs` -lSDL2_ttf -lSDL2_image -lSDL2_mixer -lbz2 -lm
++LIBS = `sdl2-config --libs` -lSDL2_ttf -lSDL2_image -lSDL2_mixer -ljpeg -lbz2 -lm
+ EXT_FLAGS = 
+ 
+ # recommended: smpeg
+diff -Naru jh10001-onscripter-jh-e0eaf62c1cd6/Makefile.onscripter jh10001/Makefile.onscripter
+--- jh10001-onscripter-jh-e0eaf62c1cd6/Makefile.onscripter	2016-12-01 21:17:39.000000000 +0800
++++ jh10001/Makefile.onscripter	2017-09-07 18:37:37.581532727 +0800
+@@ -26,25 +26,26 @@
+ 	builtin_dll/ONScripter_effect_trig$(OBJSUFFIX) \
+ 	builtin_dll/layer_oldmovie$(OBJSUFFIX)
+ 
++CHARSET_SUPPORT_OBJS=coding2utf16$(OBJSUFFIX) \
++	sjis2utf16$(OBJSUFFIX) \
++	gbk2utf16$(OBJSUFFIX)
++
+ DECODER_OBJS = DirectReader$(OBJSUFFIX) \
+ 	SarReader$(OBJSUFFIX) \
+ 	NsaReader$(OBJSUFFIX) \
+-	sjis2utf16$(OBJSUFFIX) \
+-	coding2utf16$(OBJSUFFIX) \
+-	gbk2utf16$(OBJSUFFIX)
+-	
++	$(CHARSET_SUPPORT_OBJS)
+ 
+ SARDEC_OBJS  = sardec$(OBJSUFFIX) \
+ 	DirectReader$(OBJSUFFIX) \
+ 	SarReader$(OBJSUFFIX) \
+-	sjis2utf16$(OBJSUFFIX)
++	$(CHARSET_SUPPORT_OBJS)
+ 
+ SARCONV_OBJS = sarconv$(OBJSUFFIX) \
+ 	conv_shared$(OBJSUFFIX) \
+ 	resize_image$(OBJSUFFIX) \
+ 	DirectReader$(OBJSUFFIX) \
+ 	SarReader$(OBJSUFFIX) \
+-	sjis2utf16$(OBJSUFFIX)
++	$(CHARSET_SUPPORT_OBJS)
+ 
+ NSADEC_OBJS  = nsadec$(OBJSUFFIX) \
+ 	$(DECODER_OBJS)
+diff -Naru jh10001-onscripter-jh-e0eaf62c1cd6/README jh10001/README
+--- jh10001-onscripter-jh-e0eaf62c1cd6/README	2016-12-01 21:17:39.000000000 +0800
++++ jh10001/README	2017-09-07 19:44:48.733589983 +0800
+@@ -1,16 +1,29 @@
+ ONScripter-Jh
+ 
+-ONScripter是一个开源的NScripter脚本解释工具，主要由Ogapee开发维护
+-原版的Readme请查看Readme.old。
++本软件修改自ONScripter，ONScripter主要由Ogapee开发维护
++Ogapee邮箱地址：ogapee@aqua.dti2.ne.jp
+ 
+-这是一个修改版的ONScripter源码，在GPLv2协议下发布，使用时请遵守。
++本程序在GPLv2协议下发布，使用时请遵守。（详见同目录下的COPYING文件）
+ 
+ 修改目标：
+ 	提供比原版ONScripter更好的性能，适当增加一些功能
+ 	添加中文支持
+ 	尽可能的兼容原版ONS脚本
+-	
+-进度
+ 
++进度：
+ 	SDL2分支提供各种改进并可在SDL2环境编译
+-	目前Windows、Android、iOS、Linux、Windows Phone平台均编译通过实测可用，其余平台未测试
+\ No newline at end of file
++
++ONScripter介绍：
++	Onscripter是一个用来解析NScripter脚本的第三方开源Galgame游戏引擎。
++
++编译：
++	目前Windows、Android、iOS、Linux、Windows Phone平台均编译通过实测可用，其余平台未测试。
++
++	Linux:
++		$ make -f Makefile.Linux
++		$ onscripter
++
++	Windows:
++		$ nmake -f Makefile.Win
++		$ onscripter.exe
++
+diff -Naru jh10001-onscripter-jh-e0eaf62c1cd6/README.old jh10001/README.old
+--- jh10001-onscripter-jh-e0eaf62c1cd6/README.old	2016-12-01 21:17:39.000000000 +0800
++++ jh10001/README.old	1970-01-01 08:00:00.000000000 +0800
+@@ -1,52 +0,0 @@
+-ONScripter
+-
+-0. はじめに
+-
+-	光抖木践会侯の NScripter 脱に侯喇されたスクリプトを迫极に豺坚して悸乖します。
+-
+-
+-1. 瓢侯茨董
+-
+-	libjpeg 6b, bzip2-1.0.5, SDL-1.2.14, SDL_image-1.2.10, SDL_mixer-1.2.8, SDL_ttf-2.0.9, 第び SMPEG-0.4.5 が瓢侯する茨董です。
+-	Linux 2.6.32 + Xvnc4 + g++ (gcc 4.4.4) で倡券しています。
+-	Linux, Windows Vista (Visual Studio 2008 C++), Android (HTC Desire), iPad2 惧で瓢侯澄千をしています。
+-	その戮、MacOS X, MacOS 9, Android(Nexus One, Emulator), iPhone, iPad, PSP, FreeBSD, Solaris(on SPARC), Tru64 UNIX, OS/Warp, iPod, PocketPC, Playstation3, Wii, GP2X, NetWalker, Dreamcast 惧での瓢侯鼠桂をいただいています。
+-
+-
+-2. コンパイルˇ弹瓢数恕
+-
+-	コンパイルˇ弹瓢数恕は笆布の奶りです。
+-	ただし、onscripter を悸乖する眷疥に default.ttf, スクリプト, ア〖カイブがなければいけません。
+-	拒しくは票涵の www/onscripter.html を徊救してください。
+-
+-	Linux もしくは FreeBSD, Solaris の眷圭
+-	$ make -f Makefile.Linux
+-	$ onscripter
+-
+-	Windows の眷圭 (DOS プロンプトで)
+-	$ libjpeg 6b, bzip2, SDL と SMPEG のインスト〖ル眷疥に圭わせて Makefile.Win を饯赖
+-	$ nmake -f Makefile.Win
+-	$ onscripter.exe
+-
+-	MacOS X の眷圭
+-	$ make -f Makefile.MacOSX
+-	$ onscripter
+-
+-	Zaurus (SL-5500, SL-A300, SL-B500, SL-C700) の眷圭
+-	侍のマシン(Linux 霹)惧でクロスコンパイル
+-	$ make -f Makefile.ARMLinux
+-	Zaurus の Qtopia 惧から悸乖
+-	$ onscripter
+-
+-	それ笆嘲のプラットフォ〖ムでは、Makefile.Linux を亏妨にして Makefile.### を侯ってください。
+-
+-	ONScripter は、カレントディレクトリの 0.txt もしくは nscript.dat を极瓢弄に粕み哈み、それにしたがってカレントディレクトリの arc.sar もしくは arc.nsa を粕み哈みます。
+-
+-
+-3. 息晚黎
+-
+-	塑ソフトウェアに簇する啼い圭わせは
+-
+-	ogapee@aqua.dti2.ne.jp
+-
+-	まで排灰メ〖ルにてお搓いします。
+diff -Naru jh10001-onscripter-jh-e0eaf62c1cd6/sarconv.cpp jh10001/sarconv.cpp
+--- jh10001-onscripter-jh-e0eaf62c1cd6/sarconv.cpp	2016-12-01 21:17:39.000000000 +0800
++++ jh10001/sarconv.cpp	2017-09-07 19:12:15.658241170 +0800
+@@ -27,6 +27,9 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include "SarReader.h"
++#include "sjis2utf16.h"
++
++Coding2UTF16 *coding2utf16 = new SJIS2UTF16();
+ 
+ extern int scale_ratio_upper;
+ extern int scale_ratio_lower;
+diff -Naru jh10001-onscripter-jh-e0eaf62c1cd6/sardec.cpp jh10001/sardec.cpp
+--- jh10001-onscripter-jh-e0eaf62c1cd6/sardec.cpp	2016-12-01 21:17:39.000000000 +0800
++++ jh10001/sardec.cpp	2017-09-07 19:03:34.290156054 +0800
+@@ -29,14 +29,17 @@
+ #include <sys/stat.h>
+ #include <errno.h>
+ #include "SarReader.h"
++#include "sjis2utf16.h"
+ #ifdef _WIN32
+ #include <direct.h>
++
+ inline int mkdir(const char *pathname, int unused){
+   return _mkdir(pathname);
+ }
+ #endif
+ 
+ extern int errno;
++Coding2UTF16 *coding2utf16 = new SJIS2UTF16();
+ 
+ int main( int argc, char **argv )
+ {
