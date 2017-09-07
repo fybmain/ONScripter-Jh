@@ -3,15 +3,15 @@
 
 **本程序在[GPLv2][]协议下发布，使用时请遵守。（详见同目录下的COPYING文件）**
 
->Onscripter是一个用来解析NScripter脚本的第三方开源Galgame游戏引擎，主要由Ogapee（<ogapee@aqua.dti2.ne.jp>）开发维护。
+Onscripter是一个用来解析NScripter脚本的第三方开源Galgame游戏引擎，主要由Ogapee（<ogapee@aqua.dti2.ne.jp>）开发维护。
 
->[ONScripter-Jh][]修改自[ONScripter][]，旨在在兼容原版[Onscripter][]的前提下，添加中文支持，提高性能，增加功能，发起人为h j（<https://bitbucket.org/jh10001/>）。
+[ONScripter-Jh][]修改自[ONScripter][]，旨在在兼容原版[Onscripter][]的前提下，添加中文支持，提高性能，增加功能，发起人为h j（<https://bitbucket.org/jh10001/>）。
 
 ## 编译
 * Linux：
 ```
-	$ make -f Makefile.Linux
-	$ onscripter
+$ make -f Makefile.Linux
+$ onscripter
 ```
 
 * Windows：
